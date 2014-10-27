@@ -1,0 +1,26 @@
+{
+  "name": "mu-selector-set",
+  "homepage": "https://github.com/mu-lib/mu-selector-set",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mu-lib/mu-selector-set.git"
+  },
+  "authors": [
+    "Mikael Karon"
+  ],
+  "description": "Micro SelectorSet",
+  "main": "main.js",
+  "moduleType": [
+    "amd"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ],
+  "devDependencies": {
+    "requirejs": "~2"
+  }
+}
