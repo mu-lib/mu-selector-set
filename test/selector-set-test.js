@@ -4,7 +4,7 @@ buster.testCase("mu-lib/selector-set", function (run) {
 
 	var assert = buster.referee.assert;
 
-	require([ "mu-lib/selector-set", "jquery" ], function (SelectorSet, $) {
+	require([ "mu-selector-set", "jquery" ], function (SelectorSet, $) {
 		var tail = SelectorSet.tail;
 
 		var TAG = "tag";
@@ -60,7 +60,7 @@ buster.testCase("mu-lib/selector-set", function (run) {
 
 			"add": {
 				"starts with empty INDEXES": function () {
-					var selector = SelectorSet();
+					var selector = new SelectorSet();
 					var indexes = selector[INDEXES];
 					var expected = [];
 
@@ -68,7 +68,7 @@ buster.testCase("mu-lib/selector-set", function (run) {
 				},
 
 				"groups INDEXES correctly": function () {
-					var selector = SelectorSet();
+					var selector = new SelectorSet();
 					var indexes = selector[INDEXES];
 					var expected = [];
 
@@ -96,7 +96,7 @@ buster.testCase("mu-lib/selector-set", function (run) {
 
 			"matches": {
 				"tag/id/class": function () {
-					var selector = SelectorSet();
+					var selector = new SelectorSet();
 					var element = $("<tag id='id' class='class'/>").get(0);
 
 					assert.match(selector
@@ -108,7 +108,7 @@ buster.testCase("mu-lib/selector-set", function (run) {
 				},
 
 				"excludes unmatched rules": function () {
-					var selector = SelectorSet();
+					var selector = new SelectorSet();
 					var element = $("<tag id='id' class='class'/>").get(0);
 
 					assert.match(selector
@@ -120,7 +120,47 @@ buster.testCase("mu-lib/selector-set", function (run) {
 						.add(".otherClass")
 						.add("*")
 						.matches(MATCHES_SELECTOR, element), [ [ "tag" ], [ "#id" ], [ ".class" ], [ "*" ] ]);
+				},
+
+				"multiple element arguments": function () {
+					var selector = new SelectorSet();
+					var $element = $("<tag id='id'/><tag class='class' />");
+					var element1 = $element.get(0);
+					var element2 = $element.get(1);
+
+					assert.match(selector
+						.add("tag")
+						.add("#id")
+						.add(".class")
+						.matches(MATCHES_SELECTOR, element1, element2), [ [ "tag" ], [ "#id" ], [ ".class" ] ]);
+				},
+
+				"array of element arguments": function () {
+					var selector = new SelectorSet();
+					var $element = $("<tag id='id'/><tag class='class' />");
+					var element1 = $element.get(0);
+					var element2 = $element.get(1);
+
+					assert.match(selector
+						.add("tag")
+						.add("#id")
+						.add(".class")
+						.matches(MATCHES_SELECTOR, [ element1, element2 ]), [ [ "tag" ], [ "#id" ], [ ".class" ] ]);
+				},
+
+				"array of array of element arguments": function () {
+					var selector = new SelectorSet();
+					var $element = $("<tag id='id'/><tag class='class' />");
+					var element1 = $element.get(0);
+					var element2 = $element.get(1);
+
+					assert.match(selector
+						.add("tag")
+						.add("#id")
+						.add(".class")
+						.matches(MATCHES_SELECTOR, [ element1 ], [ element2 ]), [ [ "tag" ], [ "#id" ], [ ".class" ] ]);
 				}
+
 			}
 		});
 	});

@@ -11,7 +11,9 @@ define(function () {
 	 */
 
 	var UNDEFINED;
-	var ARRAY_SLICE = Array.prototype.slice;
+	var ARRAY_PROTO = Array.prototype;
+	var ARRAY_SLICE = ARRAY_PROTO.slice;
+	var ARRAY_CONCAT = ARRAY_PROTO.concat;
 	var LENGTH = "length";
 	var INDEXES = "indexes";
 	var INDEXED = "indexed";
@@ -279,10 +281,10 @@ define(function () {
 		/**
 		 * Matches candidates against element
 		 * @param {Function} matchesSelector `matchesSelector` function
-		 * @param {HTMLElement} element DOM Element
+		 * @param {HTMLElement|HTMLElement[]...} element DOM Element
 		 * @return {Array} Matching array of candidates
 		 */
-		"matches": function matches(matchesSelector, element) {
+		"matches": function matches(matchesSelector) {
 			var me = this;
 			var indexer;
 			var indexed;
@@ -296,29 +298,31 @@ define(function () {
 			var candidateCount;
 			var result = [];
 			var resultCount = 0;
-
-			if (!element) {
-				return result;
-			}
+			var args = ARRAY_CONCAT.apply(ARRAY_PROTO, ARRAY_SLICE.call(arguments, 1));
+			var argsCount = args[LENGTH];
+			var argsIndex;
+			var element;
 
 			while (indexCount--) {
 				index = indexes[indexCount];
 				indexer = index[INDEXER];
 				indexed = index[INDEXED];
 
-				keys = indexer(element);
-				keysCount = keys[LENGTH];
+				for (argsIndex = 0; argsIndex < argsCount; argsIndex++) {
+					element = args[argsIndex];
+					keys = indexer(element);
+					keysCount = keys[LENGTH];
 
-				while (keysCount--) {
+					while (keysCount--) {
+						if ((candidates = indexed[keys[keysCount]]) !== UNDEFINED) {
+							candidateCount = candidates[LENGTH];
 
-					if ((candidates = indexed[keys[keysCount]]) !== UNDEFINED) {
-						candidateCount = candidates[LENGTH];
+							while (candidateCount--) {
+								candidate = candidates[candidateCount];
 
-						while (candidateCount--) {
-							candidate = candidates[candidateCount];
-
-							if (matchesSelector(element, candidate[0])) {
-								result[resultCount++] = candidate;
+								if (result.indexOf(candidate) === -1 && matchesSelector(element, candidate[0])) {
+									result[resultCount++] = candidate;
+								}
 							}
 						}
 					}
