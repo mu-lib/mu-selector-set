@@ -16,7 +16,7 @@
             garbage: /(\:.+?|\[.*?\])$/,
             id: /^#(?:[\w\u00c0-\uFFFF\-]|\\.)+/,
             cls: /^\.(?:[\w\u00c0-\uFFFF\-]|\\.)+/,
-            candidate: /([#\.]{0,1}(?:[\w\u00c0-\uFFFF\-]|\\.)+?)$/ // tag, class or id at the end
+            candidate: /([#\.]{0,1}(?:[\w\u00c0-\uFFFF\-]|\\.)+?)$/
         };
 
         /**
@@ -53,7 +53,7 @@
             for (i = 0; i < l; i++)
                 if (re.cls.test(candidates[i]))
                     return candidates[i];
-            // if no class, return the tag,
+            // if no class, return the tag
             return candidates[0];
         }
 
