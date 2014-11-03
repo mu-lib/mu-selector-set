@@ -8,7 +8,7 @@ var assert = require('assert'),
 global.window = doc.parentWindow;
 
 var $ = require('jquery'),
-    SelectorSet = require('../src/SelectorSet');
+    SelectorSet = require('../');
 
 describe('SelectorSet', function() {
 
@@ -81,6 +81,204 @@ describe('SelectorSet', function() {
                 assert(matches.indexOf("tagtag") === -1);
                 assert(matches.indexOf("#i-d") === -1);
                 assert(matches.indexOf(".clas_s") === -1);
+
+            });
+
+        });
+
+    });
+
+    describe("multiple elements", function() {
+
+        var els = $(
+                "<tag id='id1' class='class'/>" +
+                "<tag id='id2' class='class'/>"
+            ),
+            el1 = els.get(0),
+            el2 = els.get(1);
+
+        describe("with selector set contains all element's selectors", function() {
+
+            var sset = new SelectorSet();
+
+            sset.add("tag", "foo", "bar") // "foo" and "bar" are arbitrary data
+                .add("#id1")
+                .add("#id2")
+                .add(".class")
+                .add("#id1.class", "bar", "baz")
+                .add(".class#id1")
+                .add("tag#id1.class")
+                .add("tag.class#id1")
+                .add("tag.class#id2")
+                .add("*");
+
+            describe("elements as arguments to 'matches'", function() {
+
+                it("should match all selectors", function() {
+
+                    var matches = sset.matches(el1, el2).map(function(m) {
+                        return m[0]
+                    });
+                    assert(matches.length === 10);
+                    assert(matches.indexOf("tag") !== -1);
+                    assert(matches.indexOf("#id1") !== -1);
+                    assert(matches.indexOf("#id2") !== -1);
+                    assert(matches.indexOf(".class") !== -1);
+                    assert(matches.indexOf("#id1.class") !== -1);
+                    assert(matches.indexOf(".class#id1") !== -1);
+                    assert(matches.indexOf("tag#id1.class") !== -1);
+                    assert(matches.indexOf("tag.class#id1") !== -1);
+                    assert(matches.indexOf("tag.class#id2") !== -1);
+                    assert(matches.indexOf("*") !== -1);
+
+                });
+
+            });
+
+            describe("elements as an array argument to 'matches'", function() {
+
+                it("should match all selectors", function() {
+
+                    var matches = sset.matches([el1, el2]).map(function(m) {
+                        return m[0]
+                    });
+                    assert(matches.length === 10);
+                    assert(matches.indexOf("tag") !== -1);
+                    assert(matches.indexOf("#id1") !== -1);
+                    assert(matches.indexOf("#id2") !== -1);
+                    assert(matches.indexOf(".class") !== -1);
+                    assert(matches.indexOf("#id1.class") !== -1);
+                    assert(matches.indexOf(".class#id1") !== -1);
+                    assert(matches.indexOf("tag#id1.class") !== -1);
+                    assert(matches.indexOf("tag.class#id1") !== -1);
+                    assert(matches.indexOf("tag.class#id2") !== -1);
+                    assert(matches.indexOf("*") !== -1);
+
+                });
+
+            });
+
+            describe("elements as arrays as arguments to 'matches'", function() {
+
+                it("should match all selectors", function() {
+
+                    var matches = sset.matches([el1], [el2]).map(function(m) {
+                        return m[0]
+                    });
+                    assert(matches.length === 10);
+                    assert(matches.indexOf("tag") !== -1);
+                    assert(matches.indexOf("#id1") !== -1);
+                    assert(matches.indexOf("#id2") !== -1);
+                    assert(matches.indexOf(".class") !== -1);
+                    assert(matches.indexOf("#id1.class") !== -1);
+                    assert(matches.indexOf(".class#id1") !== -1);
+                    assert(matches.indexOf("tag#id1.class") !== -1);
+                    assert(matches.indexOf("tag.class#id1") !== -1);
+                    assert(matches.indexOf("tag.class#id2") !== -1);
+                    assert(matches.indexOf("*") !== -1);
+
+                });
+
+            });
+
+        });
+
+        describe("with selector set contains some of element's selectors", function() {
+
+            var sset = new SelectorSet();
+
+            sset.add("tag", "foo", "bar") // "foo" and "bar" are arbitrary data
+                .add("#id1")
+                .add("#id-1")
+                .add("#id2")
+                .add("#id-2")
+                .add(".class")
+                .add(".clas_s")
+                .add("#id1.class", "bar", "baz")
+                .add(".class#id1")
+                .add("tag#id1.class")
+                .add("tag.class#id1")
+                .add("tag.class#id2")
+                .add("*");
+
+            describe("elements as arguments to 'matches'", function() {
+
+                it("should match all selectors", function() {
+
+                    var matches = sset.matches(el1, el2).map(function(m) {
+                        return m[0]
+                    });
+                    assert(matches.length === 10);
+                    assert(matches.indexOf("tag") !== -1);
+                    assert(matches.indexOf("#id1") !== -1);
+                    assert(matches.indexOf("#id2") !== -1);
+                    assert(matches.indexOf(".class") !== -1);
+                    assert(matches.indexOf("#id1.class") !== -1);
+                    assert(matches.indexOf(".class#id1") !== -1);
+                    assert(matches.indexOf("tag#id1.class") !== -1);
+                    assert(matches.indexOf("tag.class#id1") !== -1);
+                    assert(matches.indexOf("tag.class#id2") !== -1);
+                    assert(matches.indexOf("*") !== -1);
+
+                    assert(matches.indexOf("#id-1") === -1);
+                    assert(matches.indexOf("#id-2") === -1);
+                    assert(matches.indexOf(".clas_s") === -1);
+
+                });
+
+            });
+
+            describe("elements as an array argument to 'matches'", function() {
+
+                it("should match all selectors", function() {
+
+                    var matches = sset.matches([el1, el2]).map(function(m) {
+                        return m[0]
+                    });
+                    assert(matches.length === 10);
+                    assert(matches.indexOf("tag") !== -1);
+                    assert(matches.indexOf("#id1") !== -1);
+                    assert(matches.indexOf("#id2") !== -1);
+                    assert(matches.indexOf(".class") !== -1);
+                    assert(matches.indexOf("#id1.class") !== -1);
+                    assert(matches.indexOf(".class#id1") !== -1);
+                    assert(matches.indexOf("tag#id1.class") !== -1);
+                    assert(matches.indexOf("tag.class#id1") !== -1);
+                    assert(matches.indexOf("tag.class#id2") !== -1);
+                    assert(matches.indexOf("*") !== -1);
+
+                    assert(matches.indexOf("#id-1") === -1);
+                    assert(matches.indexOf("#id-2") === -1);
+                    assert(matches.indexOf(".clas_s") === -1);
+
+                });
+
+            });
+
+            describe("elements as arrays as arguments to 'matches'", function() {
+
+                it("should match all selectors", function() {
+
+                    var matches = sset.matches([el1], [el2]).map(function(m) {
+                        return m[0]
+                    });
+                    assert(matches.length === 10);
+                    assert(matches.indexOf("tag") !== -1);
+                    assert(matches.indexOf("#id1") !== -1);
+                    assert(matches.indexOf("#id2") !== -1);
+                    assert(matches.indexOf(".class") !== -1);
+                    assert(matches.indexOf("#id1.class") !== -1);
+                    assert(matches.indexOf(".class#id1") !== -1);
+                    assert(matches.indexOf("tag#id1.class") !== -1);
+                    assert(matches.indexOf("tag.class#id1") !== -1);
+                    assert(matches.indexOf("tag.class#id2") !== -1);
+                    assert(matches.indexOf("*") !== -1);
+
+                    assert(matches.indexOf("#id-1") === -1);
+                    assert(matches.indexOf("#id-2") === -1);
+                    assert(matches.indexOf(".clas_s") === -1);
+
+                });
 
             });
 

@@ -42,21 +42,28 @@
 
         /**
          * Match DOM elements to selectors in the set.
-         * @param el The DOM element to match.
-         * @returns A list of selectors that match the element
+         * @param el1, el2, ... The DOM elements to match.
+         * @returns A list of selectors that match the elements
          */
-        SelectorSet.prototype.matches = function(el) {
-            var i, j, k, subset, elKey, elKeys, candidate, candidates, res = [];
-            for (i = 0; i < this.subsets.length; i++) {
-                subset = this.subsets[i];
-                elKeys = subset.extractElementKeys(el);
-                for (j = 0; j < elKeys.length; j++) {
-                    elKey = elKeys[j];
-                    candidates = subset.get(elKey);
-                    for (k = 0; k < candidates.length; k++) {
-                        candidate = candidates[k];
-                        if (this.matchesSelector(el, candidate[0]))
-                            res.push(candidate);
+        SelectorSet.prototype.matches = function() {
+            var i, j, k, t, el, subset, elKey, elKeys, candidate, candidates,
+                res = [],
+                els = Array.prototype.slice.call(arguments);
+            els = Array.prototype.concat.apply([], els); // flatten 'els'
+            for (t = 0; t < els.length; t++) {
+                el = els[t];
+                for (i = 0; i < this.subsets.length; i++) {
+                    subset = this.subsets[i];
+                    elKeys = subset.extractElementKeys(el);
+                    for (j = 0; j < elKeys.length; j++) {
+                        elKey = elKeys[j];
+                        candidates = subset.get(elKey);
+                        for (k = 0; k < candidates.length; k++) {
+                            candidate = candidates[k];
+                            if (res.indexOf(candidate) === -1 &&
+                                this.matchesSelector(el, candidate[0]))
+                                res.push(candidate);
+                        }
                     }
                 }
             }
