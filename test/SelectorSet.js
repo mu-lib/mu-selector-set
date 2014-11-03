@@ -19,10 +19,11 @@ describe('SelectorSet', function() {
         describe("with selector set contains all element's selectors", function() {
 
             var sset = new SelectorSet();
-            sset.add("tag")
+
+            sset.add("tag", "foo", "bar") // "foo" and "bar" are arbitrary data
                 .add("#id")
                 .add(".class")
-                .add("#id.class")
+                .add("#id.class", "bar", "baz")
                 .add(".class#id")
                 .add("tag#id.class")
                 .add("tag.class#id")

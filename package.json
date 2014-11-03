@@ -26,8 +26,5 @@
     "jsdom": "^1.1.0",
     "mocha": "^1.21.5",
     "should": "^4.1.0"
-  },
-  "dependencies": {
-    "sizzle": "^2.0.0"
   }
 }

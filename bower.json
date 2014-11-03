@@ -22,8 +22,5 @@
   ],
   "devDependencies": {
     "requirejs": "~2"
-  },
-  "dependencies": {
-    "sizzle": "~2.0.0"
   }
 }

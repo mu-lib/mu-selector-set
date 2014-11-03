@@ -23,17 +23,17 @@
             this.subsets = Subsets();
         }
 
+        // matchesSelector can be overridden by the user.
+        SelectorSet.prototype.matchesSelector = matchesSelector;
+
         SelectorSet.prototype.add = function(selector) {
             var i, subset,
-                data = Array.prototype.slice.call(arguments, 1),
+                args = Array.prototype.slice.call(arguments),
                 key = classify(selector);
             for (i = 0; i < this.subsets.length; i++) {
                 subset = this.subsets[i];
                 if (subset.isOfType(key)) {
-                    subset.add(key, {
-                        selector: selector,
-                        data: data
-                    });
+                    subset.add(key, args);
                     return this;
                 }
             }
@@ -41,7 +41,7 @@
         };
 
         /**
-         * Match a DOM element to selectors in the set.
+         * Match DOM elements to selectors in the set.
          * @param el The DOM element to match.
          * @returns A list of selectors that match the element
          */
@@ -55,16 +55,12 @@
                     candidates = subset.get(elKey);
                     for (k = 0; k < candidates.length; k++) {
                         candidate = candidates[k];
-                        if (matchesSelector(el, candidate.selector))
+                        if (this.matchesSelector(el, candidate[0]))
                             res.push(candidate);
                     }
                 }
             }
-            return res.map(function(r) {
-                var m = [r.selector];
-                Array.prototype.push.apply(m, r.data);
-                return m;
-            });
+            return res;
         };
 
         return SelectorSet;

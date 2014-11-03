@@ -13,14 +13,16 @@
 
         function Subset(re, extractor, ci) {
             var mappedLists = new MappedLists();
-            this.isOfType = re.test.bind(re);
+            this.isOfType = function(selector) {
+                return re.test(selector);
+            };
             this.extractElementKeys = extractor;
             this.add = function(key, data) {
                 mappedLists.add(ci ? key.toLowerCase() : key, data);
                 return this;
             };
-            this.get = function(key, data) {
-                return mappedLists.get(ci ? key.toLowerCase() : key, data);
+            this.get = function(key) {
+                return mappedLists.get(ci ? key.toLowerCase() : key);
             };
         }
 

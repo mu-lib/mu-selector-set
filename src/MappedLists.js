@@ -1,6 +1,6 @@
 'use strict';
 
-(function (global) {
+(function(global) {
     if (typeof define === 'function' && define.amd) {
         define(factory);
     } else if (typeof exports === 'object') {
@@ -15,14 +15,14 @@
             this.lists = {};
         }
 
-        MappedLists.prototype.add = function (key, data) {
+        MappedLists.prototype.add = function(key, data) {
             key += " ";
             this.lists[key] = this.lists[key] || [];
             this.lists[key].push(data);
             return this;
         };
 
-        MappedLists.prototype.get = function (key) {
+        MappedLists.prototype.get = function(key) {
             key += " ";
             return this.lists[key] || [];
         };
