@@ -22,7 +22,12 @@
   "devDependencies": {
     "coveralls": "^2.11.2",
     "istanbul": "^0.3.2",
+    "jquery": "^2.1.1",
+    "jsdom": "^1.1.0",
     "mocha": "^1.21.5",
     "should": "^4.1.0"
+  },
+  "dependencies": {
+    "sizzle": "^2.0.0"
   }
 }

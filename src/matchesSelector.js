@@ -1,19 +1,15 @@
 'use strict';
 
-(function () {
+(function() {
     if (typeof define === 'function' && define.amd) {
-        define(factory);
+        define(['sizzle'], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory();
+        module.exports = factory(require('sizzle'));
     } else {
         throw Error("no module loader found");
     }
 
-    function factory() {
-        var docElem = window.document.documentElement;
-        return docElem.webkitMatchesSelector ||
-            docElem.mozMatchesSelector ||
-            docElem.oMatchesSelector ||
-            docElem.msMatchesSelector;
+    function factory(sizzle) {
+        return sizzle.matchesSelector;
     }
 }());

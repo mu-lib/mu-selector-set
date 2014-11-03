@@ -11,22 +11,22 @@
 
     function factory() {
 
-        function IndexedSet() {
-            this.sets = {};
+        function MappedLists() {
+            this.lists = {};
         }
 
-        IndexedSet.prototype.add = function (key, data) {
+        MappedLists.prototype.add = function (key, data) {
             key += " ";
-            this.sets[key] = this.sets[key] || [];
-            this.sets[key].push(data);
+            this.lists[key] = this.lists[key] || [];
+            this.lists[key].push(data);
             return this;
         };
 
-        IndexedSet.prototype.get = function (key) {
+        MappedLists.prototype.get = function (key) {
             key += " ";
-            return this.sets[key] || [];
+            return this.lists[key] || [];
         };
 
-        return IndexedSet;
+        return MappedLists;
     }
 }(this));

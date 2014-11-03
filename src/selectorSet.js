@@ -1,68 +1,36 @@
 'use strict';
 
-(function () {
+(function() {
     if (typeof define === 'function' && define.amd) {
         define([
             './classifier',
-            './matchesSelector',
-            './IndexedSet'
+            './Subsets',
+            './matchesSelector'
         ], factory);
     } else if (typeof exports === 'object') {
         module.exports = factory(
             require('./classifier'),
-            require('./matchesSelector'),
-            require('./IndexedSet')
+            require('./Subsets'),
+            require('./matchesSelector')
         );
     } else {
         throw Error("no module loader found");
     }
 
-    function factory(classify, matchesSelector, IndexedSet) {
-
-        var sets = [{
-            name: "id",
-            test: /^#.+$/.test,
-            map: function (el) {
-                return el.id ? [el.id] : [];
-            }
-        }, {
-            name: "class",
-            test: /^\..+$/.test,
-            map: function (el) {
-                var classes = el.className;
-                if (typeof classes === 'string')
-                    return classes.split(/\s+/);
-                if (typeof classes === 'object' && 'baseVal' in classes)
-                    return classes.baseVal.split(/\s+/);
-                return [];
-            }
-        }, {
-            name: "tag",
-            test: /^[^\*\.#].*$/.test,
-            map: function (el) {
-                return [el.nodeName];
-            }
-        }, {
-            name: "other",
-            test: /^\*$/.test,
-            map: function () {
-                return ['*'];
-            }
-        }];
+    function factory(classify, Subsets, matchesSelector) {
 
         function SelectorSet() {
-            this.indexedSets = {};
-            var i, setType;
-            for (i = 0; i < sets.length; setType = sets[i++]) {
-                this.indexedSets[setType.name] = new IndexedSet();
-            }
+            this.subsets = Subsets();
         }
 
-        SelectorSet.prototype.add = function (selector, data) {
-            var i, setType, key = classify(selector);
-            for (i = 0; i < sets.length; setType = sets[i++]) {
-                if (setType.test(key)) {
-                    this.indexedSets[setType.name].add(key, {
+        SelectorSet.prototype.add = function(selector) {
+            var i, subset,
+                data = Array.prototype.slice.call(arguments, 1),
+                key = classify(selector);
+            for (i = 0; i < this.subsets.length; i++) {
+                subset = this.subsets[i];
+                if (subset.isOfType(key)) {
+                    subset.add(key, {
                         selector: selector,
                         data: data
                     });
@@ -77,19 +45,26 @@
          * @param el The DOM element to match.
          * @returns A list of selectors that match the element
          */
-        SelectorSet.prototype.matches = function (el) {
-            var i, j, k, set, elKey, elKeys, candidate, candidates, res = [];
-            for (i = 0; i < sets.length; set = sets[i++]) {
-                elKeys = setType.map(el);
-                for (j = 0; j < elKeys.length; elKey = elKeys[j++]) {
-                    candidates = this.indexedSets[setType.name].get(key);
-                    for (k = 0; k < candidates.length; candidate = candidates[k++]) {
-                        if (matchesSelector(el, candidate))
+        SelectorSet.prototype.matches = function(el) {
+            var i, j, k, subset, elKey, elKeys, candidate, candidates, res = [];
+            for (i = 0; i < this.subsets.length; i++) {
+                subset = this.subsets[i];
+                elKeys = subset.extractElementKeys(el);
+                for (j = 0; j < elKeys.length; j++) {
+                    elKey = elKeys[j];
+                    candidates = subset.get(elKey);
+                    for (k = 0; k < candidates.length; k++) {
+                        candidate = candidates[k];
+                        if (matchesSelector(el, candidate.selector))
                             res.push(candidate);
                     }
                 }
             }
-            return res;
+            return res.map(function(r) {
+                var m = [r.selector];
+                Array.prototype.push.apply(m, r.data);
+                return m;
+            });
         };
 
         return SelectorSet;
