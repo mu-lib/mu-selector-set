@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+(function() {
     if (typeof define === 'function' && define.amd) {
         define([], factory);
     } else if (typeof exports === 'object') {
@@ -11,12 +11,46 @@
 
     function factory() {
 
+        /**
+         * See:
+         * https://github.com/jquery/sizzle/blob/709e1db5bcb42e9d761dd4a8467899dd36ce63bc/src/sizzle.js#L81
+         * http://www.w3.org/TR/CSS21/syndata.html#value-def-identifier
+         */
+        var identifier = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+";
+
+        // regular expressions
         var re = {
+
+            /**
+             * End of line whitespace
+             */
             ws: /(\s+)$/,
+
+            /**
+             * End of line garbage is one of:
+             * - anything that starts with a colon
+             * - anything inside square brackets
+             */
             garbage: /(\:.+?|\[.*?\])$/,
-            id: /^#(?:[\w\u00c0-\uFFFF\-]|\\.)+/,
-            cls: /^\.(?:[\w\u00c0-\uFFFF\-]|\\.)+/,
-            candidate: /([#\.]{0,1}(?:[\w\u00c0-\uFFFF\-]|\\.)+?)$/
+
+            /**
+             * CSS ID selector
+             */
+            id: new RegExp("^#" + identifier),
+
+            /**
+             * CSS class selector
+             */
+            cls: new RegExp("^\\." + identifier),
+
+            /**
+             * A candidate is either:
+             * - ID
+             * - Class
+             * - Tag
+             * Look for candidates from the end of the line.
+             */
+            candidate: new RegExp("([#\\.]{0,1}" + identifier + "?)$")
         };
 
         /**
@@ -33,24 +67,26 @@
          * @return {String} the most significant part of the selector
          */
         function classifier(selector) {
-            var i, m, l, candidates = [];
-            selector = selector.replace(re.ws, "");
-            selector = selector.replace(re.garbage, "");
+            var i, m, c, candidates = [];
+            selector = selector
+                .replace(re.ws, "")
+                .replace(re.garbage, "");
             while (m = selector.match(re.candidate)) {
-                selector = selector.replace(re.candidate, "");
-                selector = selector.replace(re.garbage, "");
+                selector = selector
+                    .replace(re.candidate, "")
+                    .replace(re.garbage, "");
                 candidates.push(m[0]);
             }
-            l = candidates.length;
+            c = candidates.length;
             // if no candidates, return the universal selector
-            if (!l)
+            if (!c)
                 return '*';
             // return the ID part of the selector:
-            for (i = 0; i < l; i++)
+            for (i = 0; i < c; i++)
                 if (re.id.test(candidates[i]))
                     return candidates[i];
             // if no ID, return the class
-            for (i = 0; i < l; i++)
+            for (i = 0; i < c; i++)
                 if (re.cls.test(candidates[i]))
                     return candidates[i];
             // if no class, return the tag
