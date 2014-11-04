@@ -19,13 +19,55 @@
 
     function factory(classify, Subsets, matchesSelector) {
 
+        /**
+         * A SelectorSet is an object which manages a set of CSS selectors.
+         * It provides two core functionalities:
+         * 1. Adding selectors to the set.
+         * 2. Matching a DOM element against selectors in the set and retrieving
+         *    an array of selectors which match the element.
+         * The SelectorSet object internal implementation takes care of indexing
+         * the selectors added to it, such that later retrieving matches against
+         * a DOM object is very fast.
+         * The indexing is done according to:
+         * 1. The most significant part of the selector.
+         * 2. The type of the most significant type.
+         * For example, the selector `".parent .child#bobby"` will be indexed as
+         * an ID selector with the ID `"#bobby"`.
+         * @constructor
+         */
         function SelectorSet() {
             this.subsets = Subsets();
         }
 
-        // matchesSelector can be overridden by the user.
+        /**
+         * matchesSelector is a function which checks if an element matches a
+         * selector.
+         * It can be overridden by the user by:
+         * 1. Overriding the prototype, thus modifying all instances of
+         *    SelectorSet:
+         *    ```
+         *    SelectorSet.prototype.matchesSelector = customFunction`;
+         *    var sSet = new SelectorSet();
+         *    ```
+         * 2. Overriding the instance, thus modifying a specific instance of
+         *    SelectorSet:
+         *    ```
+         *    var sSet = new SelectorSet();
+         *    sSet.matchesSelector = customFunction`;
+         *    ```
+         * @param element {DOMElement} The element to match
+         * @param selector {String} The selector to match against
+         * @returns true if the element matches the selector. false otherwise.
+         */
         SelectorSet.prototype.matchesSelector = matchesSelector;
 
+        /**
+         * Add a selector to the set.
+         * @param selector {String} The selector to add.
+         * @param datum1, datum2, ... Arbitrary number of additional parameters
+         * which will be added with the selector as associated data.
+         * @returns {SelectorSet}
+         */
         SelectorSet.prototype.add = function(selector) {
             var i, subset,
                 args = Array.prototype.slice.call(arguments),
@@ -43,7 +85,8 @@
         /**
          * Match DOM elements to selectors in the set.
          * @param el1, el2, ... The DOM elements to match.
-         * @returns A list of selectors that match the elements
+         * @returns {Array} An array of arrays. Each subarray is a selector that
+         * matches the elements + the data this selector was added with.
          */
         SelectorSet.prototype.matches = function() {
             var i, j, k, t, el, subset, elKey, elKeys, candidate, candidates,

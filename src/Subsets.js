@@ -11,6 +11,19 @@
 
     function factory(MappedLists) {
 
+        /**
+         * A "Subset" object encapsulates all the functionalities required to
+         * manage a certain type (subset) of selectors.
+         * @param re The regular expression to test if a selector is of the type
+         * corresponding to this subset.
+         * @param extractor {Function} A function which takes a DOM element and
+         * returns a string of keys of this elements that match this subset.
+         * For example, in the IDs subset this method will return an array with
+         * at most one value - the element's id.
+         * @param ci {Boolean} Is this subset case insensitive?
+         * @constructor
+         * @private
+         */
         function Subset(re, extractor, ci) {
             var mappedLists = new MappedLists();
             this.isOfType = function(selector) {
