@@ -86,8 +86,8 @@
         /**
          * Match DOM elements to selectors in the set.
          * @param el1, el2, ... The DOM elements to match.
-         * @returns {Array} An array of arrays. Each subarray is a selector that
-         * matches the elements + the data this selector was added with.
+         * @returns {Array} An array of arrays. Each sub-array is a selector
+         * that matches the elements + the data this selector was added with.
          */
         SelectorSet.prototype.matches = function() {
             var i, j, k, t, el, subset, elKey, elKeys, candidate, candidates,
