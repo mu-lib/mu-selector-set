@@ -1,0 +1,38 @@
+{
+  "name": "mu-selector-set",
+  "version": "1.0.0",
+  "description": "A CSS selector set with fast DOM element matching.",
+  "main": "main.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --recursive --reporter spec test",
+    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --recursive --reporter spec test",
+    "travis": "./node_modules/.bin/istanbul cover --report lcovonly ./node_modules/.bin/_mocha -- --bail --recursive --reporter spec test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mu-lib/mu-selector-set.git"
+  },
+  "author": "µLib Team (https://github.com/mu-lib)",
+  "keywords": [
+    "css",
+    "selector",
+    "set",
+    "match"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mu-lib/mu-selector-set/issues"
+  },
+  "homepage": "https://github.com/mu-lib/mu-selector-set",
+  "devDependencies": {
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.2",
+    "jquery": "^2.1.1",
+    "jsdom": "^1.1.0",
+    "mocha": "^1.21.5",
+    "should": "^4.1.0"
+  }
+}
