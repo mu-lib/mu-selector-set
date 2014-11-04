@@ -20,7 +20,7 @@ of Selector Set.
 
 `var set = new SelectorSet()`
 
-**`set.add(selector, data ...)`**:
+### `set.add(selector, data ...)`
 
 Add a selector to the set.
 
@@ -30,7 +30,7 @@ Add a selector to the set.
 
 Returns the set instance, so `add` calls can be chained.
 
-**`set.matches(element ...)`**:
+### `set.matches(element ...)`
 
 Matches DOM elements to selectors in the set.
 
@@ -39,7 +39,7 @@ Matches DOM elements to selectors in the set.
 Returns array of arrays. Each sub-array is a selector that matches the elements
 + the data this selector was added with.
 
-**`SelectorSet.prototype.matchesSelector`**
+### `SelectorSet.prototype.matchesSelector`
 
 `matchesSelector` is a function which checks if an element matches a selector.
 It's used internally by `SelectorSet`, but exposed through the prototype to
@@ -62,7 +62,7 @@ It can be overridden by:
    SelectorSet:
 
    ```
-   SelectorSet.prototype.matchesSelector = customFunction`;
+   SelectorSet.prototype.matchesSelector = customFunction;
    var sSet = new SelectorSet();
    ```
 
@@ -71,7 +71,7 @@ It can be overridden by:
 
    ```
    var sSet = new SelectorSet();
-   sSet.matchesSelector = customFunction`;
+   sSet.matchesSelector = customFunction;
    ```
 
 ## Installation
@@ -90,7 +90,7 @@ Run coverage analysis with `npm run coverage` (coverage report is saved to
 
 ## Examples
 
-```
+```Javascript
 var el = $("<div id='foo' class='bar'/>").get(0),
     sSet = new SelectorSet();
 
@@ -109,7 +109,7 @@ sSet.matches(el);
 
 **Multiple elements:**
 
-```
+```Javascript
 var el1 = $("<div id='foo'/>").get(0),
     el2 = $("<div class='bar'/>").get(0),
     sSet = new SelectorSet();
