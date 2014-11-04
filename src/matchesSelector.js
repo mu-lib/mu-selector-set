@@ -1,3 +1,9 @@
+/**
+ * ignore coverage measurements for this module,
+ * because this is just an adapter for native browser functions.
+ */
+
+/* istanbul ignore next */
 (function() {
     'use strict';
 

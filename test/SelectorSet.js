@@ -286,4 +286,85 @@ describe('SelectorSet', function() {
 
     });
 
+    describe("SVG element", function() {
+
+        var svgStr =
+            '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
+                '<g id="id" class="class"></g>'
+            '</svg>';
+
+        var el = $(svgStr).find('g').get(0);
+
+        describe("with selector set contains all element's selectors", function() {
+
+            var sset = new SelectorSet();
+
+            sset.add("g", "foo", "bar") // "foo" and "bar" are arbitrary data
+                .add("#id")
+                .add(".class")
+                .add("#id.class", "bar", "baz")
+                .add(".class#id")
+                .add("g#id.class")
+                .add("g.class#id")
+                .add("*");
+
+            it("should match all selectors", function() {
+
+                var matches = sset.matches(el).map(function(m) {
+                    return m[0]
+                });
+                assert(matches.length === 8);
+                assert(matches.indexOf("g") !== -1);
+                assert(matches.indexOf("#id") !== -1);
+                assert(matches.indexOf(".class") !== -1);
+                assert(matches.indexOf("#id.class") !== -1);
+                assert(matches.indexOf(".class#id") !== -1);
+                assert(matches.indexOf("g#id.class") !== -1);
+                assert(matches.indexOf("g.class#id") !== -1);
+                assert(matches.indexOf("*") !== -1);
+
+            });
+
+        });
+
+        describe("with selector set contains some of element's selectors", function() {
+
+            var sset = new SelectorSet();
+            sset.add("g")
+                .add("gg")
+                .add("#id")
+                .add("#i-d")
+                .add(".class")
+                .add(".clas_s")
+                .add("#id.class")
+                .add(".class#id")
+                .add("g#id.class")
+                .add("g.class#id")
+                .add("*");
+
+            it("should match some selectors", function() {
+
+                var matches = sset.matches(el).map(function(m) {
+                    return m[0]
+                });
+                assert(matches.length === 8);
+                assert(matches.indexOf("g") !== -1);
+                assert(matches.indexOf("#id") !== -1);
+                assert(matches.indexOf(".class") !== -1);
+                assert(matches.indexOf("#id.class") !== -1);
+                assert(matches.indexOf(".class#id") !== -1);
+                assert(matches.indexOf("g#id.class") !== -1);
+                assert(matches.indexOf("g.class#id") !== -1);
+                assert(matches.indexOf("*") !== -1);
+
+                assert(matches.indexOf("gg") === -1);
+                assert(matches.indexOf("#i-d") === -1);
+                assert(matches.indexOf(".clas_s") === -1);
+
+            });
+
+        });
+
+    });
+
 });

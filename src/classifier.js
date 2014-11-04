@@ -1,6 +1,7 @@
 (function() {
     'use strict';
 
+    /* istanbul ignore next */
     if (typeof define === 'function' && define.amd) {
         define([], factory);
     } else if (typeof exports === 'object') {

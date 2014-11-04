@@ -1,6 +1,7 @@
 (function() {
     'use strict';
 
+    /* istanbul ignore next */
     if (typeof define === 'function' && define.amd) {
         define(['./MappedLists'], factory);
     } else if (typeof exports === 'object') {
@@ -61,7 +62,8 @@
                         var res = [], classes = el.className;
                         if (typeof classes === 'string')
                             res = classes.split(/\s+/);
-                        if (typeof classes === 'object' && 'baseVal' in classes)
+                        // for SVG elements:
+                        else if (typeof classes === 'object' && 'baseVal' in classes)
                             res = classes.baseVal.split(/\s+/);
                         return res.map(function(r) {
                             return "." + r;
