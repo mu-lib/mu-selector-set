@@ -1,17 +1,25 @@
 {
   "name": "mu-selector-set",
+  "version": "1.0.0",
   "homepage": "https://github.com/mu-lib/mu-selector-set",
   "repository": {
     "type": "git",
     "url": "https://github.com/mu-lib/mu-selector-set.git"
   },
   "authors": [
-    "Mikael Karon"
+    "µLib Team (https://github.com/mu-lib)"
   ],
-  "description": "Micro SelectorSet",
+  "description": "A CSS selector set with fast DOM element matching.",
   "main": "main.js",
   "moduleType": [
-    "amd"
+    "amd",
+    "node"
+  ],
+  "keywords": [
+    "css",
+    "selector",
+    "set",
+    "match"
   ],
   "license": "MIT",
   "ignore": [
@@ -19,8 +27,5 @@
     "node_modules",
     "bower_components",
     "test"
-  ],
-  "devDependencies": {
-    "requirejs": "~2"
-  }
+  ]
 }
