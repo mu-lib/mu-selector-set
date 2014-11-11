@@ -1,5 +1,3 @@
-'use strict';
-
 var assert = require('assert'),
     jsdom = require("jsdom").jsdom,
     doc = jsdom("<html><body></body></html>");
@@ -11,6 +9,7 @@ var $ = require('jquery'),
     SelectorSet = require('../');
 
 describe('SelectorSet', function() {
+    'use strict';
 
     describe("one element", function() {
 
@@ -32,7 +31,7 @@ describe('SelectorSet', function() {
             it("should match all selectors", function() {
 
                 var matches = sset.matches(el).map(function(m) {
-                    return m[0]
+                    return m[0];
                 });
                 assert(matches.length === 8);
                 assert(matches.indexOf("tag") !== -1);
@@ -66,7 +65,7 @@ describe('SelectorSet', function() {
             it("should match some selectors", function() {
 
                 var matches = sset.matches(el).map(function(m) {
-                    return m[0]
+                    return m[0];
                 });
                 assert(matches.length === 8);
                 assert(matches.indexOf("tag") !== -1);
@@ -117,7 +116,7 @@ describe('SelectorSet', function() {
                 it("should match all selectors", function() {
 
                     var matches = sset.matches(el1, el2).map(function(m) {
-                        return m[0]
+                        return m[0];
                     });
                     assert(matches.length === 10);
                     assert(matches.indexOf("tag") !== -1);
@@ -140,7 +139,7 @@ describe('SelectorSet', function() {
                 it("should match all selectors", function() {
 
                     var matches = sset.matches([el1, el2]).map(function(m) {
-                        return m[0]
+                        return m[0];
                     });
                     assert(matches.length === 10);
                     assert(matches.indexOf("tag") !== -1);
@@ -163,7 +162,7 @@ describe('SelectorSet', function() {
                 it("should match all selectors", function() {
 
                     var matches = sset.matches([el1], [el2]).map(function(m) {
-                        return m[0]
+                        return m[0];
                     });
                     assert(matches.length === 10);
                     assert(matches.indexOf("tag") !== -1);
@@ -206,7 +205,7 @@ describe('SelectorSet', function() {
                 it("should match all selectors", function() {
 
                     var matches = sset.matches(el1, el2).map(function(m) {
-                        return m[0]
+                        return m[0];
                     });
                     assert(matches.length === 10);
                     assert(matches.indexOf("tag") !== -1);
@@ -233,7 +232,7 @@ describe('SelectorSet', function() {
                 it("should match all selectors", function() {
 
                     var matches = sset.matches([el1, el2]).map(function(m) {
-                        return m[0]
+                        return m[0];
                     });
                     assert(matches.length === 10);
                     assert(matches.indexOf("tag") !== -1);
@@ -260,7 +259,7 @@ describe('SelectorSet', function() {
                 it("should match all selectors", function() {
 
                     var matches = sset.matches([el1], [el2]).map(function(m) {
-                        return m[0]
+                        return m[0];
                     });
                     assert(matches.length === 10);
                     assert(matches.indexOf("tag") !== -1);
@@ -286,11 +285,57 @@ describe('SelectorSet', function() {
 
     });
 
+    describe("compound selectors", function() {
+
+        var els = $(
+                "<tag id='id1' class='class1 class2'/>" +
+                "<tag id='id2' class='class3 class4'/>"
+            ),
+            el1 = els.get(0),
+            el2 = els.get(1);
+
+        var sset = new SelectorSet();
+
+        sset.add("#id1, #id2", "foo", "bar") // "foo" and "bar" are arbitrary data
+            .add("  #id1 , .class3 ")
+            .add(".class1 , .class2, .class3 , .class4 ");
+            
+        it("should match all selectors for el1", function() {
+
+            var matches = sset.matches(el1).map(function(m) {
+                return m[0];
+            });
+            console.log(matches);
+            assert(matches.length === 4);
+            assert(matches.filter(function(m){ 
+                return m === "#id1";
+            }).length === 2);
+            assert(matches.indexOf(".class1") !== -1);
+            assert(matches.indexOf(".class2") !== -1);
+
+        });
+
+        it("should match all selectors for el2", function() {
+
+            var matches = sset.matches(el2).map(function(m) {
+                return m[0];
+            });
+            assert(matches.length === 4);
+            assert(matches.filter(function(m){ 
+                return m === ".class3";
+            }).length === 2);
+            assert(matches.indexOf("#id2") !== -1);
+            assert(matches.indexOf(".class4") !== -1);
+
+        });
+
+    });
+
     describe("SVG element", function() {
 
         var svgStr =
             '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">' +
-                '<g id="id" class="class"></g>'
+                '<g id="id" class="class"></g>' +
             '</svg>';
 
         var el = $(svgStr).find('g').get(0);
@@ -311,7 +356,7 @@ describe('SelectorSet', function() {
             it("should match all selectors", function() {
 
                 var matches = sset.matches(el).map(function(m) {
-                    return m[0]
+                    return m[0];
                 });
                 assert(matches.length === 8);
                 assert(matches.indexOf("g") !== -1);
@@ -345,7 +390,7 @@ describe('SelectorSet', function() {
             it("should match some selectors", function() {
 
                 var matches = sset.matches(el).map(function(m) {
-                    return m[0]
+                    return m[0];
                 });
                 assert(matches.length === 8);
                 assert(matches.indexOf("g") !== -1);

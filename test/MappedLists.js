@@ -1,9 +1,8 @@
-'use strict';
-
 var assert = require('assert'),
     MappedLists = require('../src/MappedLists');
 
 describe('MappedLists', function() {
+    'use strict';
 
     describe("adding elements to different keys", function() {
 

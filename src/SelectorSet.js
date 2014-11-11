@@ -20,6 +20,9 @@
 
     function factory(classify, Subsets, matchesSelector) {
 
+        var IGNORE_BOUNDARIES = ['\'', '"'],
+            SELECTORS_DELIMITER = ',';
+
         /**
          * A SelectorSet is an object which manages a set of CSS selectors.
          * It provides two core functionalities:
@@ -70,18 +73,49 @@
          * @returns {SelectorSet}
          */
         SelectorSet.prototype.add = function(selector) {
-            var i, subset,
-                args = Array.prototype.slice.call(arguments),
-                key = classify(selector);
+            // selector might actually contain multiple selections seperated
+            // by a comma. we need to separate them.
+            var args = Array.prototype.slice.call(arguments), 
+                from = 0, 
+                len = 0, 
+                tot = selector.length,
+                flag = false; // ignore flag
+            while (from + len < tot) {
+                while (
+                    selector[from + len] &&
+                    (flag || selector[from + len] !== SELECTORS_DELIMITER)
+                ) {
+                    if (selector[from + len] === flag){
+                        flag = false;
+                    } else if (
+                        flag === false && 
+                        IGNORE_BOUNDARIES.indexOf(selector[from + len]) !== -1
+                    ){
+                        flag = selector[from + len];
+                    }
+                    len++;
+                }
+                args.splice(0, 1, selector.substr(from, len));
+                _add.apply(this, args);
+                from += len + 1;
+                len = 0;
+            }
+            return this;
+        };
+
+        function _add( /* selector, arg1, arg2, ... */ ) {
+            var i, subset, key,
+                args = Array.prototype.slice.call(arguments);
+            args[0] = args[0].trim();
+            key = classify(args[0]);
             for (i = 0; i < this.subsets.length; i++) {
                 subset = this.subsets[i];
                 if (subset.isOfType(key)) {
                     subset.add(key, args);
-                    return this;
+                    return;
                 }
             }
-            return this;
-        };
+        }
 
         /**
          * Match DOM elements to selectors in the set.
