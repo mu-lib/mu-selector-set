@@ -35,6 +35,27 @@
         };
 
         /**
+         * Remove data from the list in `key`
+         * @param key The key of the list
+         * @param data Data to add
+         * @param {Function} comp custom comparator to determine which items to remove
+         * @returns {MappedLists}
+         */
+        MappedLists.prototype.remove = function(key, data, comp) {
+            key += " ";
+            comp = comp || eqComp;
+            var i, list = this.lists[key];
+            if (!list) return this;
+            if (!data){
+                delete this.lists[key];
+                return this;
+            }
+            i = list.length;
+            while(i--) if (comp(data, list[i])) list.splice(i, 1);
+            return this;
+        };
+
+        /**
          * Get the list associated with 'key', or an empty list
          * if not found.
          * @param key
@@ -42,9 +63,14 @@
          */
         MappedLists.prototype.get = function(key) {
             key += " ";
-            return this.lists[key] || [];
+            if (!this.lists[key]) this.lists[key] = [];
+            return this.lists[key];
         };
 
         return MappedLists;
+    }
+
+    function eqComp(o1, o2){
+        return o1 === o2;
     }
 }(this));
