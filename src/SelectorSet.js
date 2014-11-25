@@ -5,12 +5,14 @@
     if (typeof define === 'function' && define.amd) {
         define([
             './classifier',
+            './splitter',
             './Subsets',
             './matchesSelector'
         ], factory);
     } else if (typeof exports === 'object') {
         module.exports = factory(
             require('./classifier'),
+            require('./splitter'),
             require('./Subsets'),
             require('./matchesSelector')
         );
@@ -18,10 +20,7 @@
         throw Error("no module loader found");
     }
 
-    function factory(classify, Subsets, matchesSelector) {
-
-        var IGNORE_BOUNDARIES = ['\'', '"'],
-            SELECTORS_DELIMITER = ',';
+    function factory(classify, splitter, Subsets, matchesSelector) {
 
         /**
          * A SelectorSet is an object which manages a set of CSS selectors.
@@ -75,30 +74,12 @@
         SelectorSet.prototype.add = function(selector) {
             // selector might actually contain multiple selections seperated
             // by a comma. we need to separate them.
-            var args = Array.prototype.slice.call(arguments), 
-                from = 0, 
-                len = 0, 
-                tot = selector.length,
-                flag = false; // ignore flag
-            while (from + len < tot) {
-                while (
-                    selector[from + len] &&
-                    (flag || selector[from + len] !== SELECTORS_DELIMITER)
-                ) {
-                    if (selector[from + len] === flag){
-                        flag = false;
-                    } else if (
-                        flag === false && 
-                        IGNORE_BOUNDARIES.indexOf(selector[from + len]) !== -1
-                    ){
-                        flag = selector[from + len];
-                    }
-                    len++;
-                }
-                args.splice(0, 1, selector.substr(from, len));
+            var args = Array.prototype.slice.call(arguments),
+                selectors = splitter(selector),
+                i = selectors.length;
+            while (i--) {
+                args.splice(0, 1, selectors[i]);
                 _add.apply(this, args);
-                from += len + 1;
-                len = 0;
             }
             return this;
         };

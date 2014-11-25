@@ -77,7 +77,7 @@
                 new Subset(
                     /^[^\*\.#].*$/,
                     function(el) {
-                        return [el.nodeName];
+                        return el.nodeName ? [el.nodeName] : [];
                     },
                     true // case insensitive
                 )
