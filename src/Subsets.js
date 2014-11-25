@@ -35,6 +35,10 @@
                 mappedLists.add(ci ? key.toLowerCase() : key, data);
                 return this;
             };
+            this.remove = function(key, data, comp) {
+                mappedLists.remove(ci ? key.toLowerCase() : key, data, comp);
+                return this;
+            };
             this.get = function(key) {
                 return mappedLists.get(ci ? key.toLowerCase() : key);
             };

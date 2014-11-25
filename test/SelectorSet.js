@@ -299,15 +299,14 @@ describe('SelectorSet', function() {
         sset.add("#id1, #id2", "foo", "bar") // "foo" and "bar" are arbitrary data
             .add("  #id1 , .class3 ")
             .add(".class1 , .class2, .class3 , .class4 ");
-            
+
         it("should match all selectors for el1", function() {
 
             var matches = sset.matches(el1).map(function(m) {
                 return m[0];
             });
-            console.log(matches);
             assert(matches.length === 4);
-            assert(matches.filter(function(m){ 
+            assert(matches.filter(function(m){
                 return m === "#id1";
             }).length === 2);
             assert(matches.indexOf(".class1") !== -1);
@@ -321,11 +320,91 @@ describe('SelectorSet', function() {
                 return m[0];
             });
             assert(matches.length === 4);
-            assert(matches.filter(function(m){ 
+            assert(matches.filter(function(m){
                 return m === ".class3";
             }).length === 2);
             assert(matches.indexOf("#id2") !== -1);
             assert(matches.indexOf(".class4") !== -1);
+
+        });
+
+    });
+
+    describe("remove selectors", function(){
+
+        var els = $(
+                "<tag id='id1' class='class'/>" +
+                "<tag id='id2' class='class'/>"
+            ),
+            el1 = els.get(0),
+            el2 = els.get(1);
+
+        describe("remove selectors", function() {
+
+            var sset = new SelectorSet();
+
+            sset.add("tag", "foo", "bar") // "foo" and "bar" are arbitrary data
+                .add("#id1");
+
+            sset.remove("#id1");
+            sset.remove("tag");
+
+            it("should not match selectors", function() {
+
+                var matches = sset.matches(el1);
+                assert(matches.length === 0);
+
+            });
+
+        });
+
+        describe("remove selectors + data", function() {
+
+            var sset = new SelectorSet(),
+                f = function(){};
+
+            sset.add("tag", "foo", "bar")
+                .add(".class", "foo", "bar")
+                .add("#id1", f);
+
+            sset.remove("#id1", f);
+            sset.remove("tag");
+            sset.remove(".class", "foo");
+
+            it("should not match selectors", function() {
+
+                var matches = sset.matches(el1);
+                assert(matches.length === 0);
+
+            });
+
+        });
+
+        describe("remove compound selectors", function() {
+
+            var sset = new SelectorSet(),
+                f = function(){};
+
+            sset.add("#id1, #id2", "foo", "bar") // "foo" and "bar" are arbitrary data
+                .add("#id1, .class", f);
+
+            sset.remove(".class, #id1", f);
+
+            it("should succeed", function() {
+
+                var matches1 = sset.matches(el1),
+                    matches2 = sset.matches(el2);
+
+                assert(matches1.length === 1);
+                assert(matches1.some(function(m) {
+                    return m[0] === "#id1" && m[1] === "foo" && m[2] === "bar";
+                }));
+                assert(matches2.length === 1);
+                assert(matches2.some(function(m) {
+                    return m[0] === "#id2" && m[1] === "foo" && m[2] === "bar";
+                }));
+
+            });
 
         });
 
