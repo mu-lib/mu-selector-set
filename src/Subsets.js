@@ -48,6 +48,10 @@
 
             var subsets = [];
 
+            // Note: The order of subsets in this array matters!
+            // It determined the priority of checking elements against
+            // subsets.
+
             // ID selectors subset
             subsets.push(
                 new Subset(
