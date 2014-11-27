@@ -491,4 +491,116 @@ describe('SelectorSet', function() {
 
     });
 
+    describe("insertion order", function() {
+
+        var els = $(
+                "<span id='id1'/>" +
+                "<span id='id2'/>" +
+                "<span class='class1'/>" +
+                "<span class='class2'/>" +
+                "<span class='class3'/>" +
+                "<span class='class4'/>"
+            ),
+            id1el = els.get(0),
+            id2el = els.get(1),
+            class1el = els.get(2),
+            class2el = els.get(3),
+            class3el = els.get(4),
+            class4el = els.get(5);
+
+        var sset = new SelectorSet();
+
+        sset.add("#id1, #id2", "1")
+            .add("  #id1 , .class3 ", "2")
+            .add("  #id2 , .class3 ", "3")
+            .add(".class1 , .class2, .class3 , .class4 ", "4");
+
+        describe("id1el data", function(){
+
+            it("should be retrieved in the correct order", function(){
+
+                var matches = sset.matches(id1el);
+                assert(matches.length === 2);
+                assert(matches[0][0] === "#id1");
+                assert(matches[0][1] === "1");
+                assert(matches[1][0] === "#id1");
+                assert(matches[1][1] === "2");
+
+            });
+
+        });
+
+        describe("id2el data", function(){
+
+            it("should be retrieved in the correct order", function(){
+
+                var matches = sset.matches(id2el);
+                assert(matches.length === 2);
+                assert(matches[0][0] === "#id2");
+                assert(matches[0][1] === "1");
+                assert(matches[1][0] === "#id2");
+                assert(matches[1][1] === "3");
+
+            });
+
+        });
+
+        describe("class1el data", function(){
+
+            it("should be retrieved in the correct order", function(){
+
+                var matches = sset.matches(class1el);
+                assert(matches.length === 1);
+                assert(matches[0][0] === ".class1");
+                assert(matches[0][1] === "4");
+
+            });
+
+        });
+
+        describe("class2el data", function(){
+
+            it("should be retrieved in the correct order", function(){
+
+                var matches = sset.matches(class2el);
+                assert(matches.length === 1);
+                assert(matches[0][0] === ".class2");
+                assert(matches[0][1] === "4");
+
+            });
+
+        });
+
+        describe("class3el data", function(){
+
+            it("should be retrieved in the correct order", function(){
+
+                var matches = sset.matches(class3el);
+                assert(matches.length === 3);
+                assert(matches[0][0] === ".class3");
+                assert(matches[0][1] === "2");
+                assert(matches[1][0] === ".class3");
+                assert(matches[1][1] === "3");
+                assert(matches[2][0] === ".class3");
+                assert(matches[2][1] === "4");
+
+            });
+
+        });
+
+        describe("class4el data", function(){
+
+            it("should be retrieved in the correct order", function(){
+
+                var matches = sset.matches(class4el);
+                assert(matches.length === 1);
+                assert(matches[0][0] === ".class4");
+                assert(matches[0][1] === "4");
+
+            });
+
+        });
+
+    });
+
 });
