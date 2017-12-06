@@ -14,7 +14,8 @@ by [josh](https://github.com/josh/).
 Here we provide a **faster**, **more modular**, **UMD-compliant** implementation
 of Selector Set.
 
-[See benchmarks](http://jsperf.com/selectorset-match/4).
+- [benchmarks](http://jsperf.com/selectorset-match/4).
+- [tests](test)
 
 ## Usage
 
