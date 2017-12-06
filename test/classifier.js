@@ -1,9 +1,8 @@
-'use strict';
-
 var assert = require('assert'),
     classify = require('../src/classifier');
 
 describe('classify', function () {
+    'use strict';
 
     describe("simple selector", function () {
 

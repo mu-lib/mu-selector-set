@@ -5,12 +5,14 @@
     if (typeof define === 'function' && define.amd) {
         define([
             './classifier',
+            './splitter',
             './Subsets',
             './matchesSelector'
         ], factory);
     } else if (typeof exports === 'object') {
         module.exports = factory(
             require('./classifier'),
+            require('./splitter'),
             require('./Subsets'),
             require('./matchesSelector')
         );
@@ -18,7 +20,7 @@
         throw Error("no module loader found");
     }
 
-    function factory(classify, Subsets, matchesSelector) {
+    function factory(classify, splitter, Subsets, matchesSelector) {
 
         /**
          * A SelectorSet is an object which manages a set of CSS selectors.
@@ -70,18 +72,72 @@
          * @returns {SelectorSet}
          */
         SelectorSet.prototype.add = function(selector) {
-            var i, subset,
-                args = Array.prototype.slice.call(arguments),
-                key = classify(selector);
+            // selector might actually contain multiple selections seperated
+            // by a comma. we need to separate them.
+            var args = Array.prototype.slice.call(arguments),
+                selectors = splitter(selector),
+                i = selectors.length;
+            while (i--) {
+                args.splice(0, 1, selectors[i]);
+                _add.apply(this, args);
+            }
+            return this;
+        };
+
+        function _add( /* selector, arg1, arg2, ... */ ) {
+            var i, subset, key,
+                args = Array.prototype.slice.call(arguments);
+            args[0] = args[0].trim();
+            key = classify(args[0]);
             for (i = 0; i < this.subsets.length; i++) {
                 subset = this.subsets[i];
                 if (subset.isOfType(key)) {
                     subset.add(key, args);
-                    return this;
+                    return;
                 }
+            }
+        }
+
+        /**
+         * Remove a selector from the set.
+         * @param selector {String} The selector to remove.
+         * @param datum1, datum2, ... Arbitrary number of additional parameters.
+         * @returns {SelectorSet}
+         */
+        SelectorSet.prototype.remove = function(selector) {
+            // selector might actually contain multiple selections seperated
+            // by a comma. we need to separate them.
+            var args = Array.prototype.slice.call(arguments),
+                selectors = splitter(selector),
+                i = selectors.length;
+            while (i--) {
+                args.splice(0, 1, selectors[i]);
+                _remove.apply(this, args);
             }
             return this;
         };
+
+        function _remove( /* selector, arg1, arg2, ... */ ) {
+            var i, subset, key,
+                args = Array.prototype.slice.call(arguments);
+            args[0] = args[0].trim();
+            key = classify(args[0]);
+            for (i = 0; i < this.subsets.length; i++) {
+                subset = this.subsets[i];
+                if (subset.isOfType(key)) {
+                    subset.remove(key, args, compare);
+                    return;
+                }
+            }
+
+            function compare(args, candidate){
+                var i = 0, len = args.length;
+                for (; i < len; i++){
+                    if (args[i] !== candidate[i]) return false;
+                }
+                return true;
+            }
+        }
 
         /**
          * Match DOM elements to selectors in the set.

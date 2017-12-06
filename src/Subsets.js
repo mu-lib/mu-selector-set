@@ -35,6 +35,10 @@
                 mappedLists.add(ci ? key.toLowerCase() : key, data);
                 return this;
             };
+            this.remove = function(key, data, comp) {
+                mappedLists.remove(ci ? key.toLowerCase() : key, data, comp);
+                return this;
+            };
             this.get = function(key) {
                 return mappedLists.get(ci ? key.toLowerCase() : key);
             };
@@ -43,6 +47,10 @@
         return function() {
 
             var subsets = [];
+
+            // Note: The order of subsets in this array matters!
+            // It determined the priority of checking elements against
+            // subsets.
 
             // ID selectors subset
             subsets.push(
@@ -77,7 +85,7 @@
                 new Subset(
                     /^[^\*\.#].*$/,
                     function(el) {
-                        return [el.nodeName];
+                        return el.nodeName ? [el.nodeName] : [];
                     },
                     true // case insensitive
                 )

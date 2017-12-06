@@ -14,7 +14,8 @@ by [josh](https://github.com/josh/).
 Here we provide a **faster**, **more modular**, **UMD-compliant** implementation
 of Selector Set.
 
-[See benchmarks](http://jsperf.com/selectorset-match/4).
+- [benchmarks](http://jsperf.com/selectorset-match/4).
+- [tests](test)
 
 ## Usage
 
@@ -28,7 +29,17 @@ Add a selector to the set.
 0. `data ...` - Arbitrary number of additional parameters which will be added
    with the selector as associated data.
 
-Returns the set instance, so `add` calls can be chained.
+Returns the set instance, so `remove` / `add` calls can be chained.
+
+### `set.remove(selector, data ...)`
+
+Remove a selector (+data) from the set.
+
+0. `selector {String}` - The selector to remove.
+0. `data ...` - Arbitrary number of additional parameters for more specific
+   removal of selectors.
+
+Returns the set instance, so `remove` / `add` calls can be chained.
 
 ### `set.matches(element ...)`
 
@@ -117,7 +128,7 @@ var el1 = $("<div id='foo'/>").get(0),
 sSet.add("div")
     .add(".bar", 123, 456)
     .add(".baz", 123, "abc")
-    .add("#foo.bar")
+    .add("#foo.bar, .bar.baz")
     .add("*");
 
 set.matches(el1, el2);
